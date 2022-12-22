@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- Fonts -->
+ <link rel="dns-prefetch" href="//fonts.gstatic.com">
+ <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <!-- Styles -->
+ <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.bootstrap4.min.css">
+     <!-- Script -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<title>Personal Collection</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+          <a class="navbar-brand" href="#">Personal Collection</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">&#127968;Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="products.html">&#128525;Products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">&#128512;Customers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+        <i class="fa fa"></i>&#9997;&#127999;Create Customer
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="createCustomerModal" tabindex="-1" aria-labelledby="createCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-dark">
+              <h1 class="modal-title fs-5" id="createCustomerModalLabel">&#9997;Create Customer</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="mb-3">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="age">Age</label>
+                <input type="text" id="age" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="email_ddress">Email Address</label>
+                <input type="text" id="email_address" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label for="status">Status</label>
+                <input type="text" id="status" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label for="credit_limit">Credit Limit</label>
+                <input type="number" id="credit_limit" class="form-control">
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-dark" data-bs-dismiss="modal">&#10067;Close</button>
+              <button type="button" class="btn btn-info" id="save_btn">&#128077;Save Customer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>Customers</h1>
+      <hr>
+      <table class="table table-bordered table table-striped table-striped">
+        <thead>
+          <tr class="bg-black text-warning">
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Phone</th>
+            <th class="text-end">Credit Limit</th>
+            <th class="text-center">...</th>
+          </tr>
+        </thead>
+        <tbody id="customers"></tbody>
+      </table>
+
+    </div>
+
+    <script>
+
+      function getAllCustomers() {
+        fetch("http://localhost:8000/api/customers")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderCustomerTable(data.customers)
+                })
+            }
+          })
+      }
+
+      function renderCustomerTable(customers) {
+        const tbody = $("#customers")
+
+        customers.forEach((cust)=>{
+          const tr = $(document.createElement("tr"))
+
+          tr.append("<td>" + cust.full_name + "</td>")
+          tr.append("<td>" + cust.age + "</td>")
+          tr.append("<td>" + cust.email_address + "</td>")
+          tr.append("<td>" + cust.status + "</td>")
+          tr.append("<td>" + cust.phone + "</td>")
+          tr.append("<td class='text-end'>" + cust.credit_limit + "</td>")
+          tr.append("<td class='text-center'><a href='show_customer.html?id=" + cust.id + "' class='btn btn-sm btn-info'> &#128194;</i></a>")
+          
+          tbody.append(tr)
+        })
+      }
+
+      function prependCustomer(cust) {
+        const tbody = $("#customers")
+
+        const tr = $(document.createElement("tr"))
+        
+        tr.append("<td class='text-bg-info'>" + cust.full_name + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.age + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.email_address + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.status + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.phone + "</td>")
+        tr.append("<td class='text-end text-bg-info'>" + cust.credit_limit + "</td>")
+        tr.append("<td class='text-center text-bg-info'><a href='show_customer.html?id=" + cust.id + "' class='btn btn-sm btn-info'> &#128194; </i></a>")
+        
+        tbody.prepend(tr)
+      }
+
+      function clearForm() {
+        $("#full_name").val(null)
+        $("#age").val(null)
+        $("#email_address").val(null)
+        $("#status").val(null)
+        $("#phone").val(null)
+        $("#credit_limit").val(null)
+      }
+
+      $(document).ready(()=>{
+        getAllCustomers()
+
+        $("#save_btn").click(()=>{
+          const data = {
+            "full_name":$("#full_name").val(),
+            "age":$("#age").val(),
+            "email_address":$("#email_address").val(),
+            "status":$("#status").val(),
+            "phone":$("#phone").val(),
+            "credit_limit":$("#credit_limit").val(),
+          }
+
+          fetch("http://localhost:8000/api/customers",{
+            credentials: "omit",
+            method: "POST",
+            body: JSON.stringify(data),
+            headers:{
+              'Accept':'application/json',
+              'Content-Type':'application/json'
+            }
+          }).then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>prependCustomer(data))
+            }
+          })
+
+          clearForm()
+          $("#createCustomerModal").modal('hide')
+        })
+      })
+
+    </script>
+</body>
+</html>
+
+    <style>
+      body{
+          background-image:transparent;
+      }
+      .container a {
+          color: rgb(0, 255, 13);
+          margin-left: 10px;
+          margin-top: 4px;
+      }
+      .container p:hover{
+          color: rgb(128, 49, 0);
+          margin-left: 10px;
+          margin-top: 4px;
+          opacity: 0.6;
+      padding:3 8rem;
+      transition: 0.2s;
+      }
+    .container,li{
+      color:palevioletred;
+      }
+</style>

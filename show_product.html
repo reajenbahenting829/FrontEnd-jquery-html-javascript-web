@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Personal Collection</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+          <a class="navbar-brand" href="#">Personal Collection</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">&#127968;Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="products.html">&#128525;Products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">&#128512;Customers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mt-2">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="products.html">Products</a></li>
+          <li class="breadcrumb-item active" aria-current="page">View Product | <span class="product_name"></span></li>
+        </ol>
+      </nav>
+
+      <h1 class="mt-3 product_name text-uppercase"></h1>
+      <hr>
+      <div class="row">
+        <div class="col-md-4 ">
+
+          <h3>Product Details</h3>
+
+          <div class="mb-3">
+            <label for="brand">Brand</label>
+            <input type="text" id="brand" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control">
+          </div>
+          
+          <div class="mb-3">
+            <label for="supplier">Supplier</label>
+            <input type="text" id="supplier" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="category">Category</label>
+            <input type="text" id="category" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="price">Price</label>
+            <input type="number" id="price" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="name">Units</label>
+            <select name="units" id="units" class="form-select">
+              <option>Pieces</option>
+              <option>Kilograms</option>
+              <option>Grams</option>accusantium reprehenderit
+              <option>Bottles</option>
+              <option>Packs</option>
+              <option>Litres</option>
+              <option>Boxes</option>
+              <option>Bundles</option>
+              <option>Inches</option>
+              <option>Meters</option>
+              <option>Dozens</option>
+            </select>
+          </div>
+
+          <div class="d-flex">
+            <button class="btn btn-primary me-2" id="save_btn">
+              <i class="fa fa-save"></i> Save
+            </button>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+              <i class="fa fa-trash"></i>Delete
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-warning text-dark">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Product?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  
+                  <div class="modal-body">
+                    
+                    <div class="alert alert-danger">&#129488;
+                      Are you sure you want to delete this product?
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">&#10067;Close</button>
+                    <button type="button" class="btn btn-danger" id="confirm_delete_product"> <i class="fa fa-trash"></i>Delete</button>
+                  </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      
+            <tbody id="transactions"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+
+      function getProduct(product_id) {
+        fetch('http://localhost:8000/api/products/' + product_id)
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderProduct(data)
+                })
+            }
+          })
+      }
+
+      function renderProduct(product) {
+        $(".product_name").text(product.name)
+        $("#supplier").val(product.supplier)
+        $("#category").val(product.category)
+        $("#price").val(product.price)
+        $("#quantity").val(product.quantity)
+        $("#units").val(product.units)
+
+        //render units selection dynamically
+        const units = ['Pieces','Litres','Kilograms','Grams','Bottles','Boxes','Bundles','Meters','Inches','Packs','Sachets']
+        const unitSelect = $("#units")
+        units.forEach((u)=>{
+          const opt = $(document.createElement("option"))
+          opt.attr('value',u).text(u)
+          if(u.toLocaleLowerCase()==item.units.toLocaleLowerCase())
+            opt.attr('selected', 'selected')
+          unitSelect.append(opt)
+        })
+      }
+
+      $(document).ready(()=>{
+        const urlParams = new URLSearchParams(window.location.search);
+        const param_id = urlParams.get('id');
+
+        getProduct(param_id)
+
+        $("#confirm_delete_product").click(()=>{
+          $("#deleteModal").modal('hide')
+
+          fetch('http://localhost:8000/api/products/' + param_id,{
+            credentials: "omit",
+            method:"DELETE",
+            headers:{
+              "Accept":"application/json",
+            }
+          })
+          .then(response=>{
+            if(response.status==200){
+              alert('The product has been deleted.')
+              window.location = 'products.html'
+            }
+
+            if(response.status==500) {
+              alert('Cannot delete product.')
+            }
+
+          })
+
+        })
+
+        $("#save_btn").click(()=>{
+
+          const data = {
+            "brand":$("#brand").val(),
+            "name": $("#name").val(),
+            "supplier": $("#supplier").val(),
+            "category": $("#category").val(),
+            "price": $("#price").val(),
+            "quantity": $("#quantity").val(),
+            "units": $("#units").val()
+          }
+
+          fetch("http://localhost:8000/api/products/" + param_id,{
+            credentials: "omit",
+            method: "PUT",
+            headers:{
+              "Accept":"application/json",
+              "Content-Type":"application/json"
+            },
+            body: JSON.stringify(data)
+          })
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  alert('The data has been updated.')
+                })
+            }
+          })
+        })
+      })
+
+    </script>
+</body>
+</html>
+
+<script type="text/javascript">
+  var image1 = new Image()
+  image1.src = "image/pc1.png"
+  var image2 = new Image()
+  image2.src = "image/pc2.jpg"
+  var image3 = new Image()
+  image3.src = "image/pc3.jpg"
+  </script>
+  </head>
+  <body>
+  <p><img src="images/pc1.jpg" width="1350 %" height="300px" name="slide" /></p>
+  <script type="text/javascript">
+            var step=1;
+          function slideit()
+          {
+              document.images.slide.src = eval("image"+step+".src");
+              if(step<2)
+                  step++;
+              else
+              if(step<3)
+                  step++;
+              else
+                  step=1;
+              setTimeout("slideit()",2500);
+          }
+          slideit();
+  </script>
+    <style>
+      body{
+          background-color:rgb(35, 35, 38);
+      }
+      .container a {
+          color: rgb(0, 255, 85);
+          margin-left: 10px;
+          margin-top: 4px;
+      }
+      .container p:hover{
+          color: rgb(128, 49, 0);
+          margin-left: 10px;
+          margin-top: 4px;
+          opacity: 0.6;
+      padding:3 8rem;
+      transition: 0.2s;
+      }
+    .container,li{
+      color:pink;
+      }
+</style>

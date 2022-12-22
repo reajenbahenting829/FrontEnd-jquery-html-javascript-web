@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Personal Collection</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+          <a class="navbar-brand" href="#">Personal Collection</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">&#127968;Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="products.html">&#128525;Products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">&#128512;Customers</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+      <div class="float-end">
+      
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="fa fa"></i>&#9997;&#127999;Create Collection
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true"  class="form-control">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-primary text-dark">
+                <h1 class="modal-title fs-5" id="createModalLabel">&#9997;Create Collection</h1>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              
+                <div class="mb-3">
+                  <label for="brand">Brand</label>
+                  <input type="text" id="brand" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="supplier">Supplier</label>
+                  <input type="text" id="supplier" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="category">Category</label>
+                  <input type="text" id="category" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="price">Price</label>
+                  <input type="numeric" id="price" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="quantity">Quantity</label>
+                  <input type="numeric" id="quantity" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="name">Units</label>
+                  <select name="units" id="units" class="form-select">
+                    <option>Pieces</option>
+                    <option>Kilograms</option>
+                    <option>Grams</option>accusantium reprehenderit
+                    <option>Bottles</option>
+                    <option>Packs</option>
+                    <option>Litres</option>
+                    <option>Boxes</option>
+                    <option>Bundles</option>
+                    <option>Inches</option>
+                    <option>Meters</option>
+                    <option>Dozens</option>
+                  </select>
+                </div>
+                
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">&#10067;Close</button>
+                <button type="button" id="save-btn" class="btn btn-info">&#128077;Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <h1>Products</h1>
+      
+      <table class="table table-bordered table table-hover table-striped">
+        <thead>
+          <tr class="bg-black text-warning">
+            <th>Brand</th>
+            <th>Name</th>
+            <th>Supplier</th>
+            <th>Category</th>
+            <th class='text-right'>Price</th>
+            <th class='text-right'>Quantity</th>
+            <th class="text-center">...</th>
+          </tr>
+        </thead>
+        <tbody id="products"></tbody>
+      </table>
+      
+    </div>
+
+    <script>
+
+      function getAllProducts() {
+        fetch("http://localhost:8000/api/products")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderTable(data.products)
+                })
+            }
+          })
+      }
+
+      function renderTable(products) {
+        var tbody = $("#products")
+
+        products.forEach((product)=>{
+          const tr = $(document.createElement("tr"))
+          tr.append("<td>" + product.brand + "</td>")
+          tr.append("<td>" + product.name + "</td>")
+          tr.append("<td>" + product.supplier + "</td>")
+          tr.append("<td>" + product.category + "</td>")
+          tr.append("<td class='text-right'>" + product.price + "</td>")
+          tr.append("<td class='text-right'>" + product.quantity + "</td>")
+          tr.append("<td class='text-center'><a href='show_product.html?id=" + product.id + "' class='btn btn-sm btn-info'>&#128194;</i></a>")
+
+          tbody.append(tr)
+        })
+      }
+
+      function prependTable(product) {
+        var tbody = $("#products")
+        const tr = $(document.createElement("tr"))
+        tr.append("<td>" + product.brand + "</td>")
+        tr.append("<td>" + product.name + "</td>")
+        tr.append("<td>" + product.supplier + "</td>")
+        tr.append("<td>" + product.category + "</td>")
+        tr.append("<td class='text-right'>" + product.price + "</td>")
+        tr.append("<td class='text-right'>" + product.quantity + "</td>")
+        tr.append("<td  class='text-center'><a href='show_product.html?id=" + product.id + "' class='btn btn-sm btn-info'>&#128194;</i></a>")
+
+        tbody.prepend(tr)
+      }
+
+      $(document).ready(()=>{
+        getAllProducts();
+
+        $("#save-btn").click(()=>{
+
+          const data = {
+            "brand":$("#brand").val(),
+            "name": $("#name").val(),
+            "supplier": $("#supplier").val(),
+            "category": $("#category").val(),
+            "price": $("#price").val(),
+            "quantity": $("#quantity").val(),
+            "units": $("#units").val()
+          }
+
+          console.log(data)
+
+          fetch("http://localhost:8000/api/products",{
+            "credentials":"omit",
+            "method":"POST",
+            "headers": {
+              "Accept":"application/json",
+              "Content-Type":"application/json"
+            },
+            "body": JSON.stringify(data)
+          }).then(request=>{
+            if(request.status==200) {
+              request.json()
+                .then(data=>{
+                  prependTable(data)
+                })
+            }
+          })
+
+          $("#createModal").modal('hide')
+        })
+      })
+
+
+    </script>
+    
+</body>
+</html>
+
+  </script>
+    <style>
+      body{
+          background-image:transparent;
+      }
+      .container a {
+          color: rgb(0, 255, 4);
+          margin-left: 10px;
+          margin-top: 4px;
+      }
+      .container p:hover{
+          color: rgb(128, 49, 0);
+          margin-left: 10px;
+          margin-top: 4px;
+          opacity: 0.6;
+      padding:3 8rem;
+      transition: 0.2s;
+      }
+    .container,li{
+      color:palevioletred;
+      }
+</style>
